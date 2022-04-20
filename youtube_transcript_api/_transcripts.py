@@ -1,5 +1,6 @@
 import sys
-
+import browsercookie
+import os
 # This can only be tested by using different python versions, therefore it is not covered by coverage.py
 if sys.version_info.major == 2: # pragma: no cover
     reload(sys)
@@ -85,7 +86,10 @@ class TranscriptListFetcher(object):
         return html
 
     def _fetch_html(self, video_id):
-        response = self._http_client.get(WATCH_URL.format(video_id=video_id))
+        cj = browsercookie.chrome(cookie_file=os.path.join(os.getenv('APPDATA', ''),
+                                                           r'..\Local\Google\Chrome\User Data\Profile 1\Network\Cookies'))
+        response = self._http_client.get(WATCH_URL.format(video_id=video_id), cookies=cj)
+        #response = self._http_client.get(WATCH_URL.format(video_id=video_id))
         return unescape(_raise_http_errors(response, video_id).text)
 
 
